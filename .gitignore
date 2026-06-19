@@ -1,0 +1,11 @@
+# Roblox / Rojo
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Editor / System
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

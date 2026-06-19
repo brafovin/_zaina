@@ -1,0 +1,6 @@
+# rokit.toml - verwaltet die Werkzeuge fuer dieses Roblox-Projekt.
+# Mit "rokit install" werden Rojo & Co. automatisch installiert.
+# (rokit von https://github.com/rojo-rbx/rokit installieren)
+
+[tools]
+rojo = "rojo-rbx/rojo@7.4.4"
