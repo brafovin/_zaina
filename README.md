@@ -1,90 +1,69 @@
-# 👗 Style Stars – ein Roblox Fashion-Spiel
+# 👗 Famous Fashion – das Mode-Spiel
 
-Ein Mode-Wettbewerb für Roblox: Die Spielerinnen bekommen **3 Minuten Zeit**, um
-sich ein Outfit zusammenzustellen. Danach werden alle nacheinander auf dem
-**Laufsteg** vorgestellt, alle stimmen ab, **wer den besten Style hat** – und es
-gibt eine **Siegerehrung mit Platz 1, 2 und 3** und **Style-Punkten**. Dann geht
-die nächste Runde los.
+Ein Mode-Wettbewerb als Browser-Spiel. Du spielst gegen **11 Mitspielerinnen**
+(vom Computer gesteuert), also **12 Teilnehmerinnen** pro Runde. Es läuft komplett
+im Browser – perfekt für **Vercel**, kein Server nötig.
 
-> **Wichtiger Hinweis:** Roblox kann das Geschlecht der Spieler technisch nicht
-> prüfen. „Nur Mädchen, keine Jungs" lässt sich also nicht erzwingen. Das Spiel
-> ist deshalb als Mädchen-Thema (Name, Farben, Design) gebaut – mitspielen kann
-> technisch aber jeder.
+## 🎮 So läuft eine Runde
 
----
+1. **Lobby** – 30 Sekunden warten, bis 12 Teilnehmerinnen da sind.
+2. **Thema** – ein Motto wird verkündet (z. B. „Sommer am Strand", „Elegante Gala").
+3. **Umkleide** – stell dein Outfit zusammen: **Haare, Make-up, Oberteil
+   (T-Shirt/Pullover), Kleid/Hose/Rock, Schuhe, Tasche**. Dein Püppchen ändert
+   sich live mit.
+4. **Voting** – alle bewerten sich gegenseitig mit **bis zu 5 Sternen**.
+5. **Siegerehrung** – wer die meisten Sterne hat, kommt aufs Podest. Die
+   **Top 3** bekommen Platz 1, 2 und 3.
 
-## 🎮 So läuft eine Runde ab
+**Tipp zum Gewinnen:** Wähle Kleidung, die zum **Thema** passt – dafür gibt es
+die meisten Sterne!
 
-| Phase | Was passiert | Dauer (einstellbar) |
-|-------|--------------|---------------------|
-| **Lobby** | Warten, bis genug Spielerinnen da sind | 15 Sek. |
-| **Styling** | Outfit aus der Garderobe aussuchen | **3 Minuten** |
-| **Laufsteg** | Jede wird einzeln vorgestellt | 8 Sek. pro Spielerin |
-| **Voting** | Alle wählen den besten Style | 25 Sek. |
-| **Ergebnis** | Platz 1/2/3 + Punkte | 15 Sek. |
+## 🚀 Auf Vercel veröffentlichen
 
-Punkte: **10 pro Stimme** plus Bonus für die Plätze (**+100 / +60 / +30**).
-Die Gesamtpunkte stehen oben rechts in der Roblox-Bestenliste.
+Das ist eine ganz normale statische Webseite (`index.html`, `styles.css`,
+`game.js`). Du musst in Vercel **nichts** einstellen:
 
----
+- Framework Preset: **Other** (kein Framework)
+- Build Command: *(leer lassen)*
+- Output Directory: *(leer lassen)*
 
-## 🚀 So bekommst du das Spiel in Roblox Studio
+Sobald dieser Code auf deinem Vercel-Branch liegt, deployt Vercel automatisch und
+zeigt das Spiel an. Der 404-Fehler ist damit weg.
 
-Der Code hier wird mit dem Werkzeug **Rojo** in Roblox Studio geladen.
+## 💻 Lokal testen
 
-### Schritt 1 – Programme installieren
-1. **Roblox Studio** installieren (kostenlos auf roblox.com).
-2. **Rojo** installieren – am einfachsten als Plugin direkt in Studio:
-   In Studio oben auf *Plugins → Manage Plugins → Marketplace* nach **„Rojo"**
-   suchen und installieren.
-
-### Schritt 2 – Code mit Studio verbinden
-1. Dieses Projekt auf deinen Computer laden (Download/Clone).
-2. Ein **Terminal** im Projektordner öffnen und den Rojo-Server starten:
-   ```
-   rojo serve
-   ```
-   (Hast du Rojo noch nicht als Programm? Dann `rokit install` ausführen –
-   das installiert Rojo automatisch.)
-3. In Roblox Studio das **Rojo-Plugin** öffnen und auf **„Connect"** klicken.
-
-Jetzt erscheinen alle Skripte automatisch in Studio. Wenn du am Code etwas
-änderst, wird es sofort übernommen.
-
-### Schritt 3 – Spielen / Testen
-In Studio oben auf **„Play"** drücken. Zum Testen mit mehreren Spielerinnen:
-*Test → Clients and Servers →* z. B. 2 Spieler starten.
-
----
-
-## ⚙️ Selbst anpassen (ganz einfach)
-
-Fast alles stellst du in **einer Datei** ein:
-`src/ReplicatedStorage/Shared/GameConfig.luau`
-
-- **Zeiten** ändern (z. B. Styling kürzer/länger).
-- **Punkte** ändern.
-- **Garderobe** füllen: Die Beispiel-Kleidung hat noch keine echten Teile
-  (`AssetId = 0`). Such im Roblox-Katalog ein Kleidungsstück, kopiere die Zahl
-  aus der Webadresse und trag sie als `AssetId` ein. Dann tragen die
-  Spielerinnen es wirklich.
-- **Farben & Name** des Spiels ändern.
-
----
-
-## 📁 Aufbau des Projekts
+Einfach die Datei `index.html` im Browser öffnen. Oder mit einem kleinen Server:
 
 ```
-src/
-├─ ReplicatedStorage/Shared/
-│  ├─ GameConfig.luau   → Alle Einstellungen (Zeiten, Punkte, Garderobe, Farben)
-│  └─ Net.luau          → Verbindung Server <-> Spielerinnen
-├─ ServerScriptService/Server/
-│  ├─ init.server.luau  → Hauptablauf (Lobby → Styling → Laufsteg → Voting → Ergebnis)
-│  ├─ Scoring.luau      → Punkte zählen & Platzierungen
-│  └─ Wardrobe.luau     → Kleidung anziehen
-└─ StarterPlayer/StarterPlayerScripts/Client/
-   └─ init.client.luau  → Die Bildschirm-Oberfläche (Menüs, Timer, Voting)
+python3 -m http.server
+```
+… und dann `http://localhost:8000` im Browser aufrufen.
+
+## ⚙️ Selbst anpassen
+
+Alles steckt in `game.js` ganz oben:
+
+- **`CONFIG`** – Zeiten (Lobby 30 Sek., Styling-Zeit) und Anzahl Teilnehmerinnen.
+- **`THEMES`** – die Motto-Themen.
+- **`CATALOG`** – die Garderobe. Neue Kleidung hinzufügen: Eintrag mit `name`,
+  Farbe/Emoji und `tags` (zu welchen Themen das Teil passt) ergänzen.
+- **`NAMES`** – die Namen der Mitspielerinnen.
+
+## 📁 Dateien
+
+```
+index.html   → Aufbau der Bildschirme (Lobby, Thema, Umkleide, Voting, Ergebnis)
+styles.css   → Aussehen (Pink/Lila/Gold, das Mode-Püppchen)
+game.js      → Spiel-Logik (Runden, Garderobe, Bewertung, Platzierung)
 ```
 
-Viel Spaß beim Bauen! 💖
+## ℹ️ Hinweise
+
+- **„Nur Mädchen":** Eine Webseite kann das Geschlecht der Besucher nicht prüfen.
+  Das Spiel ist als Mädchen-Thema (Name, Farben, Design) gebaut.
+- **Echtes Online-Multiplayer** mit 12 echten Menschen gleichzeitig bräuchte
+  einen Server (z. B. mit Logins und Live-Verbindung). Diese Version spielst du
+  gegen vom Computer gesteuerte Mitspielerinnen – das fühlt sich genauso an und
+  läuft sofort ohne Server. Online-Multiplayer können wir später ergänzen.
+
+Viel Spaß! 💖

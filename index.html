@@ -4,187 +4,90 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Famous Fashion 👗 – Das Mode-Spiel</title>
-  <meta name="description" content="Famous Fashion – ein Mode-Wettbewerb. 3 Minuten Outfit suchen, auf den Laufsteg, abstimmen und gewinnen!" />
-  <style>
-    :root {
-      --primary: #ff69b4;   /* Pink */
-      --secondary: #ba55d3; /* Lila */
-      --accent: #ffd700;    /* Gold */
-      --text: #ffffff;
-      --dark: #2a1430;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: var(--text);
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Schwebende Glitzer-Punkte im Hintergrund */
-    .sparkle {
-      position: fixed;
-      font-size: 1.5rem;
-      opacity: 0.6;
-      animation: float 6s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-25px) rotate(15deg); }
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    header {
-      text-align: center;
-      padding: 3rem 0 2rem;
-    }
-
-    h1 {
-      font-size: clamp(2.5rem, 8vw, 4.5rem);
-      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      letter-spacing: 1px;
-    }
-    h1 .star { color: var(--accent); }
-
-    .tagline {
-      font-size: clamp(1.1rem, 3vw, 1.4rem);
-      margin-top: 0.75rem;
-      opacity: 0.95;
-    }
-
-    .cta {
-      display: inline-block;
-      margin-top: 2rem;
-      background: var(--accent);
-      color: var(--dark);
-      font-size: 1.3rem;
-      font-weight: 700;
-      text-decoration: none;
-      padding: 1rem 2.5rem;
-      border-radius: 50px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .cta:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
-
-    .note {
-      margin-top: 0.85rem;
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
-
-    section {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(8px);
-      border-radius: 24px;
-      padding: 2rem;
-      margin-top: 2rem;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1.25rem;
-      color: var(--accent);
-      text-align: center;
-    }
-
-    .steps {
-      display: grid;
-      gap: 1rem;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: rgba(255,255,255,0.1);
-      border-radius: 16px;
-      padding: 1rem 1.25rem;
-    }
-    .step .emoji {
-      font-size: 2rem;
-      flex-shrink: 0;
-      width: 3rem;
-      text-align: center;
-    }
-    .step h3 { font-size: 1.15rem; }
-    .step p { font-size: 0.95rem; opacity: 0.9; margin-top: 0.2rem; }
-
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      font-size: 0.85rem;
-      opacity: 0.8;
-    }
-  </style>
+  <meta name="description" content="Famous Fashion – style dein Outfit zum Thema und gewinne den Mode-Wettbewerb!" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Glitzer -->
-  <div class="sparkle" style="top:12%; left:8%;">✨</div>
-  <div class="sparkle" style="top:22%; right:10%; animation-delay:1s;">💖</div>
-  <div class="sparkle" style="top:60%; left:5%; animation-delay:2s;">👑</div>
-  <div class="sparkle" style="top:75%; right:8%; animation-delay:1.5s;">⭐</div>
-  <div class="sparkle" style="top:40%; left:50%; animation-delay:0.5s;">👗</div>
+  <!-- Glitzer-Hintergrund -->
+  <div class="sparkles" aria-hidden="true">
+    <span style="top:10%;left:8%">✨</span>
+    <span style="top:25%;right:10%;animation-delay:1s">💖</span>
+    <span style="top:60%;left:5%;animation-delay:2s">👑</span>
+    <span style="top:78%;right:8%;animation-delay:1.5s">⭐</span>
+    <span style="top:45%;left:48%;animation-delay:.5s">👗</span>
+  </div>
 
-  <div class="container">
-    <header>
-      <h1>Famous <span class="star">★</span> Fashion</h1>
-      <p class="tagline">Der Mode-Wettbewerb – zeig deinen besten Style! 👗✨</p>
-      <!-- TODO: Sobald das Spiel veroeffentlicht ist, hier den echten Spiel-Link eintragen -->
-      <a class="cta" href="#" target="_blank" rel="noopener">▶ Jetzt spielen</a>
-      <p class="note">Hinweis: Das Spiel wird bald veröffentlicht – dann führt dieser Button direkt dorthin.</p>
-    </header>
+  <div id="app">
 
-    <section>
-      <h2>So läuft eine Runde</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="emoji">🕐</div>
-          <div><h3>Lobby</h3><p>Warten, bis genug Spielerinnen da sind.</p></div>
+    <!-- ============ START ============ -->
+    <section id="screen-intro" class="screen active">
+      <h1>Famous <span class="gold">★</span> Fashion</h1>
+      <p class="tagline">Style dein Outfit zum Thema und werde zum Mode-Star! 👗✨</p>
+      <button class="btn-big" id="btn-start">▶ Runde starten</button>
+      <p class="small">12 Teilnehmerinnen · 1 Thema · 5 Sterne pro Bewertung</p>
+    </section>
+
+    <!-- ============ LOBBY ============ -->
+    <section id="screen-lobby" class="screen">
+      <h2>Warte auf Mitspielerinnen…</h2>
+      <div class="lobby-count"><span id="lobby-current">1</span> / 12</div>
+      <div class="lobby-avatars" id="lobby-avatars"></div>
+      <div class="timer-big" id="lobby-timer">30</div>
+      <p class="small">Die Runde startet, sobald 12 Mädchen da sind.</p>
+    </section>
+
+    <!-- ============ THEMA ============ -->
+    <section id="screen-theme" class="screen">
+      <p class="small">Das Thema dieser Runde ist…</p>
+      <div class="theme-emoji" id="theme-emoji">🏖️</div>
+      <h2 id="theme-name">Sommer am Strand</h2>
+      <p class="theme-hint" id="theme-hint"></p>
+    </section>
+
+    <!-- ============ UMKLEIDE / STYLING ============ -->
+    <section id="screen-styling" class="screen">
+      <div class="styling-top">
+        <div class="theme-chip">
+          <span id="styling-theme-emoji">🏖️</span>
+          <span id="styling-theme-name">Sommer am Strand</span>
         </div>
-        <div class="step">
-          <div class="emoji">👗</div>
-          <div><h3>Styling – 3 Minuten!</h3><p>Such dir aus der Garderobe dein bestes Outfit zusammen.</p></div>
+        <div class="timer-pill" id="styling-timer">1:30</div>
+      </div>
+
+      <div class="styling-body">
+        <!-- Avatar-Vorschau -->
+        <div class="preview">
+          <div class="doll" id="preview-doll"></div>
+          <button class="btn" id="btn-done">Fertig ✓</button>
         </div>
-        <div class="step">
-          <div class="emoji">🌟</div>
-          <div><h3>Laufsteg</h3><p>Jede wird einzeln vorgestellt – zeig dich!</p></div>
-        </div>
-        <div class="step">
-          <div class="emoji">🗳️</div>
-          <div><h3>Voting</h3><p>Alle stimmen ab, wer den besten Style hat.</p></div>
-        </div>
-        <div class="step">
-          <div class="emoji">🏆</div>
-          <div><h3>Siegerehrung</h3><p>Platz 1, 2 und 3 bekommen Style-Punkte!</p></div>
+
+        <!-- Garderobe -->
+        <div class="wardrobe">
+          <div class="tabs" id="wardrobe-tabs"></div>
+          <div class="items" id="wardrobe-items"></div>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2>Worum geht's?</h2>
-      <p style="text-align:center; line-height:1.7; font-size:1.05rem;">
-        In <strong>Famous Fashion</strong> dreht sich alles um Mode. Du bekommst
-        3 Minuten, um ein cooles Outfit zu stylen, präsentierst es auf dem
-        Laufsteg, und am Ende entscheidet ihr gemeinsam, wer den besten Look hat.
-        Sammle Style-Punkte und werde zum Fashion-Star! 💖
-      </p>
+    <!-- ============ VOTING ============ -->
+    <section id="screen-voting" class="screen">
+      <h2>Wer hat den besten Style?</h2>
+      <p class="small">Gib jeder Mitspielerin bis zu 5 Sterne. ⭐</p>
+      <div class="vote-grid" id="vote-grid"></div>
+      <button class="btn-big" id="btn-vote-done">Bewertung abschicken</button>
     </section>
 
-    <footer>
-      <p>Famous Fashion · mit 💖 gemacht</p>
-    </footer>
+    <!-- ============ ERGEBNIS ============ -->
+    <section id="screen-results" class="screen">
+      <h2 class="gold">🏆 Siegerehrung</h2>
+      <div class="podium" id="podium"></div>
+      <div class="your-rank" id="your-rank"></div>
+      <div class="ranking" id="ranking"></div>
+      <button class="btn-big" id="btn-again">Nochmal spielen</button>
+    </section>
+
   </div>
+
+  <script src="game.js"></script>
 </body>
 </html>
