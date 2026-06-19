@@ -20,6 +20,71 @@ const CONFIG = {
   stylingSeconds: 90,
 };
 
+// ============================================================
+// SOUND – Musik & Effekte, komplett selbst erzeugt (keine Dateien nötig)
+// ============================================================
+const Sound = {
+  ctx: null,
+  on: true,
+  musicTimer: null,
+
+  init() {
+    if (this.ctx) return;
+    try {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) { this.ctx = null; }
+  },
+
+  // Ein einzelner Ton.
+  tone(freq, dur, type = "sine", vol = 0.2, when = 0) {
+    if (!this.ctx || !this.on) return;
+    const t = this.ctx.currentTime + when;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain).connect(this.ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.05);
+  },
+
+  click() { this.tone(660, 0.12, "triangle", 0.18); },
+  star()  { this.tone(880, 0.1, "sine", 0.2); this.tone(1320, 0.14, "sine", 0.15, 0.05); },
+  tick()  { this.tone(440, 0.06, "square", 0.08); },
+  chime() { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, 0.5, "sine", 0.18, i * 0.12)); },
+  fanfare() {
+    [523, 523, 523, 659, 784].forEach((f, i) => this.tone(f, 0.4, "triangle", 0.22, i * 0.16));
+    this.tone(1047, 0.9, "triangle", 0.22, 0.8);
+  },
+
+  // Sanfte Hintergrundmusik (sich wiederholende Melodie).
+  startMusic() {
+    if (!this.ctx) return;
+    this.stopMusic();
+    const melody = [523, 587, 659, 587, 523, 659, 784, 659];
+    let i = 0;
+    const step = () => {
+      if (!this.on) return;
+      this.tone(melody[i % melody.length], 0.45, "sine", 0.07);
+      this.tone(melody[i % melody.length] / 2, 0.45, "triangle", 0.05);
+      i++;
+    };
+    step();
+    this.musicTimer = setInterval(step, 480);
+  },
+  stopMusic() { if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; } },
+
+  toggle() {
+    this.on = !this.on;
+    if (this.on) { this.init(); this.startMusic(); }
+    else this.stopMusic();
+    return this.on;
+  },
+};
+
 // ---- Mädchen-Namen für die Mitspielerinnen ----
 const NAMES = [
   "Mia", "Emma", "Lina", "Hannah", "Lea", "Marie", "Lara", "Sophie",
@@ -35,41 +100,65 @@ const THEMES = [
   { name: "Sport & Action",   emoji: "🏃‍♀️", tags: ["sport", "casual"] },
   { name: "Party-Nacht",      emoji: "🎉", tags: ["party", "elegant"] },
   { name: "Schultag",         emoji: "🎒", tags: ["casual", "sport"] },
+  { name: "Rote-Teppich-Premiere", emoji: "🌟", tags: ["elegant", "party"] },
+  { name: "Frühlingsspaziergang", emoji: "🌸", tags: ["casual", "sommer"] },
+  { name: "Disco-Fieber",     emoji: "🪩", tags: ["party"] },
+  { name: "Gemütlicher Herbst", emoji: "🍂", tags: ["winter", "casual"] },
+  { name: "Prinzessinnen-Ball", emoji: "👑", tags: ["elegant"] },
+  { name: "Festival-Vibes",   emoji: "🎶", tags: ["sommer", "party"] },
 ];
 
 // ---- Garderobe. Jedes Teil hat "tags" (zu welchem Stil es passt). ----
+// Haare haben zusätzlich "style" (Form der Frisur) für ein hübscheres Püppchen.
 const CATALOG = {
   hair: [
-    { id: "h1", name: "Lange Locken", color: "#5b3a29", tags: ["elegant", "party"] },
-    { id: "h2", name: "Blonder Zopf", color: "#e6c27a", tags: ["casual", "sport"] },
-    { id: "h3", name: "Pink Bob",     color: "#ff69b4", tags: ["party"] },
-    { id: "h4", name: "Schwarz glatt", color: "#2b2b2b", tags: ["elegant", "winter"] },
-    { id: "h5", name: "Braune Wellen", color: "#7a4a2b", tags: ["sommer", "casual"] },
-    { id: "h6", name: "Rote Mähne",   color: "#b5482e", tags: ["party", "sommer"] },
+    { id: "h1", name: "Lange Locken",  color: "#5b3a29", style: "wavy",     tags: ["elegant", "party"] },
+    { id: "h2", name: "Blonder Zopf",  color: "#e6c27a", style: "ponytail", tags: ["casual", "sport"] },
+    { id: "h3", name: "Pink Bob",      color: "#ff69b4", style: "bob",      tags: ["party"] },
+    { id: "h4", name: "Schwarz glatt", color: "#2b2b2b", style: "long",     tags: ["elegant", "winter"] },
+    { id: "h5", name: "Braune Wellen", color: "#7a4a2b", style: "wavy",     tags: ["sommer", "casual"] },
+    { id: "h6", name: "Rote Mähne",    color: "#b5482e", style: "long",     tags: ["party", "sommer"] },
+    { id: "h7", name: "Dutt",          color: "#3a2a1d", style: "bun",      tags: ["elegant", "sport"] },
+    { id: "h8", name: "Kurzhaar",      color: "#1f1f1f", style: "short",    tags: ["sport", "casual"] },
+    { id: "h9", name: "Lila Traum",    color: "#9c27b0", style: "wavy",     tags: ["party"] },
+    { id: "h10", name: "Platinblond",  color: "#f2e6c2", style: "long",     tags: ["elegant", "party"] },
+    { id: "h11", name: "Zwei Zöpfe",   color: "#6d4c2b", style: "pigtails", tags: ["casual", "sport"] },
+    { id: "h12", name: "Mintgrün",     color: "#5ed4b0", style: "bob",      tags: ["party", "sommer"] },
   ],
   makeup: [
-    { id: "m0", name: "Natürlich", blush: true,  lip: "#d98d8d", tags: ["casual", "sommer", "sport"] },
-    { id: "m1", name: "Glamour",   blush: true,  lip: "#c41e5a", tags: ["party", "elegant"] },
-    { id: "m2", name: "Rote Lippen", blush: false, lip: "#e2243b", tags: ["elegant", "party"] },
-    { id: "m3", name: "Frisch",    blush: true,  lip: "#e98aa0", tags: ["sommer", "casual"] },
-    { id: "m4", name: "Ohne",      blush: false, lip: null,      tags: ["sport"] },
+    { id: "m0", name: "Natürlich",   blush: true,  lip: "#d98d8d", lashes: false, tags: ["casual", "sommer", "sport"] },
+    { id: "m1", name: "Glamour",     blush: true,  lip: "#c41e5a", lashes: true,  tags: ["party", "elegant"] },
+    { id: "m2", name: "Rote Lippen", blush: false, lip: "#e2243b", lashes: true,  tags: ["elegant", "party"] },
+    { id: "m3", name: "Frisch",      blush: true,  lip: "#e98aa0", lashes: false, tags: ["sommer", "casual"] },
+    { id: "m4", name: "Ohne",        blush: false, lip: null,      lashes: false, tags: ["sport"] },
+    { id: "m5", name: "Disco-Glow",  blush: true,  lip: "#ff4da6", lashes: true,  tags: ["party"] },
+    { id: "m6", name: "Beeren-Look", blush: true,  lip: "#8e2457", lashes: true,  tags: ["winter", "elegant"] },
   ],
   top: [
-    { id: "t1", name: "T-Shirt",   emoji: "👕", color: "#6ec6ff", tags: ["casual", "sommer", "sport"] },
-    { id: "t2", name: "Pullover",  emoji: "🧥", color: "#c8a2c8", tags: ["winter", "casual"] },
+    { id: "t1", name: "T-Shirt",     emoji: "👕", color: "#6ec6ff", tags: ["casual", "sommer", "sport"] },
+    { id: "t2", name: "Pullover",    emoji: "🧥", color: "#c8a2c8", tags: ["winter", "casual"] },
     { id: "t3", name: "Glitzer-Top", emoji: "✨", color: "#ffd700", tags: ["party", "elegant"] },
-    { id: "t4", name: "Bluse",     emoji: "👚", color: "#ffffff", tags: ["elegant", "casual"] },
-    { id: "t5", name: "Sport-Top", emoji: "🎽", color: "#ff6b6b", tags: ["sport"] },
-    { id: "t6", name: "Bikini-Top", emoji: "👙", color: "#ff9ecd", tags: ["sommer"] },
+    { id: "t4", name: "Bluse",       emoji: "👚", color: "#ffffff", tags: ["elegant", "casual"] },
+    { id: "t5", name: "Sport-Top",   emoji: "🎽", color: "#ff6b6b", tags: ["sport"] },
+    { id: "t6", name: "Bikini-Top",  emoji: "👙", color: "#ff9ecd", tags: ["sommer"] },
+    { id: "t7", name: "Strickjacke", emoji: "🧶", color: "#b08968", tags: ["winter", "casual"] },
+    { id: "t8", name: "Crop-Top",    emoji: "🩱", color: "#ff4da6", tags: ["party", "sommer"] },
+    { id: "t9", name: "Rolli",       emoji: "🧣", color: "#37474f", tags: ["winter", "elegant"] },
+    { id: "t10", name: "Spitzentop", emoji: "🎀", color: "#f8bbd0", tags: ["elegant", "party"] },
   ],
   bottom: [
-    { id: "b1", name: "Jeans",      type: "pants", color: "#3b5b92", tags: ["casual", "sport"] },
-    { id: "b2", name: "Rock",       type: "skirt", color: "#ff8fab", tags: ["casual", "sommer"] },
-    { id: "b3", name: "Abendkleid", type: "dress", color: "#7b1fa2", tags: ["elegant", "party"] },
-    { id: "b4", name: "Sommerkleid", type: "dress", color: "#ffd166", tags: ["sommer", "casual"] },
-    { id: "b5", name: "Leggings",   type: "pants", color: "#2b2b2b", tags: ["sport", "winter"] },
+    { id: "b1", name: "Jeans",        type: "pants", color: "#3b5b92", tags: ["casual", "sport"] },
+    { id: "b2", name: "Rock",         type: "skirt", color: "#ff8fab", tags: ["casual", "sommer"] },
+    { id: "b3", name: "Abendkleid",   type: "dress", color: "#7b1fa2", tags: ["elegant", "party"] },
+    { id: "b4", name: "Sommerkleid",  type: "dress", color: "#ffd166", tags: ["sommer", "casual"] },
+    { id: "b5", name: "Leggings",     type: "pants", color: "#2b2b2b", tags: ["sport", "winter"] },
     { id: "b6", name: "Glitzerkleid", type: "dress", color: "#e91e9c", tags: ["party", "elegant"] },
-    { id: "b7", name: "Warmer Rock", type: "skirt", color: "#8d6e63", tags: ["winter"] },
+    { id: "b7", name: "Warmer Rock",  type: "skirt", color: "#8d6e63", tags: ["winter"] },
+    { id: "b8", name: "Tüllkleid",    type: "dress", color: "#80deea", tags: ["elegant", "party"] },
+    { id: "b9", name: "Jeansrock",    type: "skirt", color: "#5472a3", tags: ["casual", "sommer"] },
+    { id: "b10", name: "Shorts",      type: "pants", color: "#ffab40", tags: ["sommer", "sport"] },
+    { id: "b11", name: "Ballkleid",   type: "dress", color: "#c2185b", tags: ["elegant"] },
+    { id: "b12", name: "Jogginghose", type: "pants", color: "#90a4ae", tags: ["sport", "casual"] },
   ],
   shoes: [
     { id: "s1", name: "Sneaker",    color: "#ffffff", tags: ["casual", "sport"] },
@@ -77,13 +166,18 @@ const CATALOG = {
     { id: "s3", name: "Sandalen",   color: "#ffcc80", tags: ["sommer", "casual"] },
     { id: "s4", name: "Stiefel",    color: "#4e342e", tags: ["winter", "elegant"] },
     { id: "s5", name: "Ballerinas", color: "#f48fb1", tags: ["casual", "elegant"] },
+    { id: "s6", name: "Glitzer-Heels", color: "#ffd700", tags: ["party", "elegant"] },
+    { id: "s7", name: "Flip-Flops", color: "#4dd0e1", tags: ["sommer"] },
+    { id: "s8", name: "Winterboots", color: "#6d4c41", tags: ["winter"] },
   ],
   bag: [
-    { id: "g1", name: "Handtasche", emoji: "👜", tags: ["elegant", "casual"] },
-    { id: "g2", name: "Clutch",     emoji: "👝", tags: ["party", "elegant"] },
-    { id: "g3", name: "Rucksack",   emoji: "🎒", tags: ["sport", "casual"] },
+    { id: "g1", name: "Handtasche",   emoji: "👜", tags: ["elegant", "casual"] },
+    { id: "g2", name: "Clutch",       emoji: "👝", tags: ["party", "elegant"] },
+    { id: "g3", name: "Rucksack",     emoji: "🎒", tags: ["sport", "casual"] },
     { id: "g4", name: "Strandtasche", emoji: "🧺", tags: ["sommer"] },
-    { id: "g5", name: "Keine",      emoji: "🚫", tags: [] },
+    { id: "g6", name: "Glitzer-Clutch", emoji: "💎", tags: ["party", "elegant"] },
+    { id: "g7", name: "Umhängetasche", emoji: "👛", tags: ["casual", "winter"] },
+    { id: "g5", name: "Keine",        emoji: "🚫", tags: [] },
   ],
 };
 
@@ -195,6 +289,7 @@ function startLobby() {
   state.timers.lobby = setInterval(() => {
     secs--;
     $("lobby-timer").textContent = Math.max(0, secs);
+    if (secs <= 5 && secs > 0) Sound.tick();
 
     // Nach und nach füllen sich die Plätze bis 12.
     if (current < CONFIG.totalPlayers && Math.random() < 0.7) {
@@ -231,6 +326,7 @@ function revealTheme() {
   createContestants();
 
   showScreen("screen-theme");
+  Sound.chime();
   $("theme-emoji").textContent = state.theme.emoji;
   $("theme-name").textContent = state.theme.name;
   $("theme-hint").textContent = "Stelle ein Outfit zusammen, das dazu passt!";
@@ -307,6 +403,7 @@ function renderItems() {
     el.innerHTML = `${visual}<div class="nm">${item.name}</div>`;
     el.onclick = () => {
       player().outfit[cat] = item;
+      Sound.click();
       renderItems();
       renderDoll($("preview-doll"), player().outfit);
     };
@@ -320,22 +417,51 @@ function renderDoll(container, outfit) {
         bottom = outfit.bottom, shoes = outfit.shoes, bag = outfit.bag;
 
   let html = "";
-  if (hair) html += `<div class="hair" style="background:${hair.color}"></div>`;
+
+  // Haare HINTER dem Kopf (lange Haare, Wellen, Zöpfe).
+  if (hair) {
+    const c = hair.color;
+    if (hair.style === "long" || hair.style === "wavy") {
+      html += `<div class="hair-back ${hair.style}" style="background:${c}"></div>`;
+    } else if (hair.style === "ponytail") {
+      html += `<div class="hair-tail" style="background:${c}"></div>`;
+    } else if (hair.style === "pigtails") {
+      html += `<div class="hair-pig l" style="background:${c}"></div><div class="hair-pig r" style="background:${c}"></div>`;
+    } else if (hair.style === "bob") {
+      html += `<div class="hair-bob" style="background:${c}"></div>`;
+    }
+  }
+
+  // Kopf + Hals
+  html += `<div class="neck"></div>`;
   html += `<div class="head"></div>`;
-  html += `<div class="eyes">••</div>`;
+
+  // Haar-Kappe VOR dem Kopf (oben).
+  if (hair) {
+    html += `<div class="hair-cap" style="background:${hair.color}"></div>`;
+    if (hair.style === "bun") html += `<div class="hair-bun" style="background:${hair.color}"></div>`;
+  }
+
+  // Gesicht: Augen, Wimpern, Wangen, Mund.
+  html += `<div class="eyes">${makeup && makeup.lashes ? "😍" : "••"}</div>`;
   if (makeup && makeup.blush) {
     html += `<div class="blush l"></div><div class="blush r"></div>`;
   }
   if (makeup && makeup.lip) {
     html += `<div class="lips" style="background:${makeup.lip}"></div>`;
+  } else {
+    html += `<div class="smile"></div>`;
   }
 
   // Kleid überdeckt Oberteil + Unterteil.
   if (bottom && bottom.type === "dress") {
+    html += `<div class="arms" style="background:#ffe0bd"></div>`;
     html += `<div class="dress" style="background:${bottom.color}"></div>`;
   } else {
+    html += `<div class="arms" style="background:#ffe0bd"></div>`;
     if (top) html += `<div class="torso" style="background:${top.color}"></div>`;
     if (bottom && bottom.type === "skirt") {
+      html += `<div class="legs bare"></div>`;
       html += `<div class="skirt" style="background:${bottom.color}"></div>`;
     } else if (bottom) {
       html += `<div class="legs" style="background:${bottom.color}"></div>`;
@@ -390,6 +516,7 @@ function startVoting() {
       st.textContent = "⭐";
       st.onclick = () => {
         state.playerRatings[i] = s;
+        Sound.star();
         [...stars.children].forEach((c2, idx) => c2.classList.toggle("on", idx < s));
       };
       stars.appendChild(st);
@@ -462,10 +589,23 @@ function showResults() {
   });
 
   showScreen("screen-results");
+  Sound.fanfare();
 }
 
 // ============================================================
 // Buttons zum Starten
 // ============================================================
-$("btn-start").onclick = startLobby;
-$("btn-again").onclick = startLobby;
+function begin() {
+  Sound.init();
+  Sound.startMusic();
+  startLobby();
+}
+$("btn-start").onclick = begin;
+$("btn-again").onclick = begin;
+
+// Ton an/aus
+$("sound-toggle").onclick = () => {
+  const on = Sound.toggle();
+  $("sound-toggle").textContent = on ? "🔊" : "🔇";
+  $("sound-toggle").classList.toggle("off", !on);
+};
