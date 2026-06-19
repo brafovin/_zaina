@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Style Stars 👗 – Das Roblox Fashion-Spiel</title>
+  <meta name="description" content="Style Stars – ein Mode-Wettbewerb auf Roblox. 3 Minuten Outfit suchen, auf den Laufsteg, abstimmen und gewinnen!" />
+  <style>
+    :root {
+      --primary: #ff69b4;   /* Pink */
+      --secondary: #ba55d3; /* Lila */
+      --accent: #ffd700;    /* Gold */
+      --text: #ffffff;
+      --dark: #2a1430;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Schwebende Glitzer-Punkte im Hintergrund */
+    .sparkle {
+      position: fixed;
+      font-size: 1.5rem;
+      opacity: 0.6;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-25px) rotate(15deg); }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+    }
+    h1 .star { color: var(--accent); }
+
+    .tagline {
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      margin-top: 0.75rem;
+      opacity: 0.95;
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 2rem;
+      background: var(--accent);
+      color: var(--dark);
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .cta:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+
+    .note {
+      margin-top: 0.85rem;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    section {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.25rem;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .steps {
+      display: grid;
+      gap: 1rem;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+    }
+    .step .emoji {
+      font-size: 2rem;
+      flex-shrink: 0;
+      width: 3rem;
+      text-align: center;
+    }
+    .step h3 { font-size: 1.15rem; }
+    .step p { font-size: 0.95rem; opacity: 0.9; margin-top: 0.2rem; }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Glitzer -->
+  <div class="sparkle" style="top:12%; left:8%;">✨</div>
+  <div class="sparkle" style="top:22%; right:10%; animation-delay:1s;">💖</div>
+  <div class="sparkle" style="top:60%; left:5%; animation-delay:2s;">👑</div>
+  <div class="sparkle" style="top:75%; right:8%; animation-delay:1.5s;">⭐</div>
+  <div class="sparkle" style="top:40%; left:50%; animation-delay:0.5s;">👗</div>
+
+  <div class="container">
+    <header>
+      <h1>Style <span class="star">★</span> Stars</h1>
+      <p class="tagline">Der Mode-Wettbewerb auf Roblox – zeig deinen besten Style! 👗✨</p>
+      <!-- TODO: Sobald das Spiel in Roblox veroeffentlicht ist, hier den echten Link eintragen -->
+      <a class="cta" href="https://www.roblox.com/" target="_blank" rel="noopener">▶ Auf Roblox spielen</a>
+      <p class="note">Hinweis: Das Spiel wird bald auf Roblox veröffentlicht – dann führt dieser Button direkt dorthin.</p>
+    </header>
+
+    <section>
+      <h2>So läuft eine Runde</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="emoji">🕐</div>
+          <div><h3>Lobby</h3><p>Warten, bis genug Spielerinnen da sind.</p></div>
+        </div>
+        <div class="step">
+          <div class="emoji">👗</div>
+          <div><h3>Styling – 3 Minuten!</h3><p>Such dir aus der Garderobe dein bestes Outfit zusammen.</p></div>
+        </div>
+        <div class="step">
+          <div class="emoji">🌟</div>
+          <div><h3>Laufsteg</h3><p>Jede wird einzeln vorgestellt – zeig dich!</p></div>
+        </div>
+        <div class="step">
+          <div class="emoji">🗳️</div>
+          <div><h3>Voting</h3><p>Alle stimmen ab, wer den besten Style hat.</p></div>
+        </div>
+        <div class="step">
+          <div class="emoji">🏆</div>
+          <div><h3>Siegerehrung</h3><p>Platz 1, 2 und 3 bekommen Style-Punkte!</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Worum geht's?</h2>
+      <p style="text-align:center; line-height:1.7; font-size:1.05rem;">
+        In <strong>Style Stars</strong> dreht sich alles um Mode. Du bekommst
+        3 Minuten, um ein cooles Outfit zu stylen, präsentierst es auf dem
+        Laufsteg, und am Ende entscheidet ihr gemeinsam, wer den besten Look hat.
+        Sammle Style-Punkte und werde zum Fashion-Star! 💖
+      </p>
+    </section>
+
+    <footer>
+      <p>Style Stars · ein Roblox-Spiel · mit 💖 gemacht</p>
+    </footer>
+  </div>
+</body>
+</html>
